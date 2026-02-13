@@ -7,8 +7,6 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
     argparse a/attribute= g/gui l/list o/open p/password s/show t/thorough u/username -- $argv
     or return
 
-    set kpass (GPG_AGENT_INFO="" gpg -r "$KPASS_GPG_RECIPIENT" -q -d "$KPASS_GPG_FILE")
-
     set search $argv[1]
 
 
@@ -36,8 +34,12 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
         end | sort
     end
 
+    if set -q _flag_gui
+        open -a KeePassXC $KEYPASS_FILE
 
-    if set -q _flag_thorough
+    else if set -q _flag_thorough
+
+        set kpass (GPG_AGENT_INFO="" gpg -r "$KPASS_GPG_RECIPIENT" -q -d "$KPASS_GPG_FILE")
 
         # Note:
         # An empty string and a "*" seem to have the same affect for the $search parameter.
@@ -92,6 +94,7 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
         end
 
     else if set -q _flag_password
+        set kpass (GPG_AGENT_INFO="" gpg -r "$KPASS_GPG_RECIPIENT" -q -d "$KPASS_GPG_FILE")
 
         set items (echo $kpass | $kpcmd search -q $KEYPASS_FILE "p:$search" 2>/dev/null)
 
@@ -121,10 +124,8 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
           end
         end
 
-    else if set -q _flag_gui
-        open -a KeePassXC $KEYPASS_FILE
-
     else if set -q _flag_open
+        set kpass (GPG_AGENT_INFO="" gpg -r "$KPASS_GPG_RECIPIENT" -q -d "$KPASS_GPG_FILE")
         # This just quits keepassxc-cli immediately. It doesn't work as expected
         $kpcmd open $KEYPASS_FILE
 
@@ -143,6 +144,8 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
 
         # echo '$kpass' | $kpcmd open $KEYPASS_FILE 2>/dev/null < /dev/tty
     else
+
+        set kpass (GPG_AGENT_INFO="" gpg -r "$KPASS_GPG_RECIPIENT" -q -d "$KPASS_GPG_FILE")
 
         # This assumes that all items that end in a forward slash are directories/groups and aren't actually password entries.
         # But when you run this function without an argument, there is a different amount of lines between this `set item` command and the previous `set item` command
