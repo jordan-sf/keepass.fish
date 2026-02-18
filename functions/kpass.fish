@@ -59,13 +59,14 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
 
         # This would be great is the above command could be on multiple lines like this
         set items (begin
-            echo $kpass | $kpcmd search $KEYPASS_FILE "t:$search" 2>/dev/null
-            echo $kpass | $kpcmd search $KEYPASS_FILE "u:$search" 2>/dev/null
-            echo $kpass | $kpcmd search $KEYPASS_FILE "url:$search" 2>/dev/null
-            echo $kpass | $kpcmd search $KEYPASS_FILE "n:$search" 2>/dev/null
             echo $kpass | $kpcmd search $KEYPASS_FILE "attach:$search" 2>/dev/null
             echo $kpass | $kpcmd search $KEYPASS_FILE "g:$search" 2>/dev/null
+            echo $kpass | $kpcmd search $KEYPASS_FILE "n:$search" 2>/dev/null
+            echo $kpass | $kpcmd search $KEYPASS_FILE "t:$search" 2>/dev/null
             echo $kpass | $kpcmd search $KEYPASS_FILE "tag:$search" 2>/dev/null
+            echo $kpass | $kpcmd search $KEYPASS_FILE "u:$search" 2>/dev/null
+            echo $kpass | $kpcmd search $KEYPASS_FILE "uuid:$search" 2>/dev/null
+            echo $kpass | $kpcmd search $KEYPASS_FILE "url:$search" 2>/dev/null
             for i in (get_flat_list_formatted); echo $i; end | grep "$search"
             end | sort | uniq)
 
