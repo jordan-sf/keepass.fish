@@ -22,10 +22,16 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
 
     function get_flat_list_formatted --no-scope-shadowing
 
-        set flat_list_formatted (echo $kpass | $kpcmd ls -q -R -f $KEYPASS_FILE | sed -e 's/^/\//')
+        set --show argv
+
+        if test "$argv[1]" = "--all"
+            set flat_list_formatted (echo $kpass | $kpcmd ls -q -R -f $KEYPASS_FILE | sed -e 's/^/\//')
+        else
+            set flat_list_formatted (echo $kpass | $kpcmd ls -q -R -f $KEYPASS_FILE | sed -e 's/^/\//' | grep -v -F '/Recycle Bin/' | grep -v '\[empty\]$')
+        end
 
         begin
-          # Handle entries without a title (these will be duplicated) by only showing the dupes, the deduping those
+          # Handle entries without a title (these will be duplicated) by only showing the dupes, then deduping those
           # Need to sort before running uniq
           for i in $flat_list_formatted; echo $i; end | sort | uniq -D | uniq;
           # remove all directories
@@ -67,7 +73,7 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
             echo $kpass | $kpcmd search $KEYPASS_FILE "u:$search" 2>/dev/null
             echo $kpass | $kpcmd search $KEYPASS_FILE "uuid:$search" 2>/dev/null
             echo $kpass | $kpcmd search $KEYPASS_FILE "url:$search" 2>/dev/null
-            for i in (get_flat_list_formatted); echo $i; end | grep "$search"
+            for i in (get_flat_list_formatted --all); echo $i; end | grep "$search"
             end | sort | uniq)
 
         # TODO: Search attributes
