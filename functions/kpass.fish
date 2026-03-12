@@ -22,8 +22,6 @@ function kpass --description "Mimics the functionality of pass using fzf (so it'
 
     function get_flat_list_formatted --no-scope-shadowing
 
-        set --show argv
-
         if test "$argv[1]" = "--all"
             set flat_list_formatted (echo $kpass | $kpcmd ls -q -R -f $KEYPASS_FILE | sed -e 's/^/\//')
         else
